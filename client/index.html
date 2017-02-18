@@ -61,6 +61,8 @@
 	}
 	
 	function doMouseup(e) {
+        if(!dragging)return;
+        
         topCtx.clear();
         
         socket.emit("draw", {shape:constructShape(
