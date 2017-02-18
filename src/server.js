@@ -19,3 +19,42 @@ const app = http.createServer(onRequest).listen(port);
 console.log(`listening on 127.0.0.1: ${port}`);
 
 const io = socketio(app);
+
+const draws = {};
+
+const onJoin = (socket) => {
+  socket.join('room1');
+  socket.emit('syncCanvas', { draws });
+};
+
+const onDraw = (socket) => {
+  socket.on('draw', (data) => {
+    const time = new Date().getTime();
+    draws[time] = data.shape;
+
+    const response = {
+      when: time,
+      shape: data.shape,
+    };
+
+    socket.emit('draw', response);
+
+    response.shape.ours = false;
+
+    socket.broadcast.to('room1').emit('draw', response);
+  });
+};
+
+
+io.sockets.on('connection', (socket) => {
+  console.log('started');
+  onJoin(socket);
+  onDraw(socket);
+      /*
+    onJoined(socket);
+    onMsg(socket);
+    socket.on('disconnect', () => {
+      onDisconnect(socket);
+    });
+    */
+});
