@@ -166,7 +166,7 @@
         
         const init = () => {
             draws = {};
-            lastDraw = performance.now;
+            lastDraw = new Date().getTime();
             let canvas = document.querySelector("#myCanvas");
             ctx = document.querySelector("#myCanvas").getContext("2d");
             ctx.width = canvas.width;
